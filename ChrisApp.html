@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chris App</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a1628;color:#fff;min-height:100vh;padding:2rem 1rem;}
+  .container{max-width:720px;margin:0 auto;}
+  .login-box{background:#112240;border:1px solid #1e3a5f;border-radius:16px;padding:2rem;max-width:360px;margin:4rem auto;text-align:center;}
+  .login-box h1{font-size:28px;font-weight:500;color:#fff;margin-bottom:8px;}
+  .login-box p{font-size:14px;color:#7a9cc0;margin-bottom:1.5rem;}
+  .login-box input{width:100%;border:1px solid #1e3a5f;border-radius:8px;padding:10px 14px;font-size:15px;font-family:inherit;color:#fff;background:#0d1f3c;outline:none;margin-bottom:12px;}
+  .login-box button{width:100%;background:#2563eb;color:#fff;border:none;border-radius:8px;padding:12px;font-size:15px;cursor:pointer;font-family:inherit;font-weight:500;}
+  .login-box button:hover{background:#1d4ed8;}
+  .login-error{color:#ff6666;font-size:13px;margin-top:8px;}
+  h1.app-title{font-size:22px;font-weight:500;margin-bottom:4px;color:#fff;}
+  .subtitle{font-size:13px;color:#7a9cc0;margin-bottom:1.5rem;}
+  .tab-bar{display:flex;gap:8px;margin-bottom:1.5rem;flex-wrap:wrap;}
+  .tab{padding:8px 16px;border:1px solid #1e3a5f;border-radius:8px;background:#112240;font-size:14px;cursor:pointer;color:#7a9cc0;}
+  .tab.active{background:#2563eb;color:#fff;border-color:#2563eb;font-weight:500;}
+  .section{display:none;}
+  .section.active{display:block;}
+  .card{background:#112240;border:1px solid #1e3a5f;border-radius:12px;padding:1rem 1.25rem;margin-bottom:12px;}
+  .avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:500;font-size:13px;flex-shrink:0;}
+  .av-blue{background:#1e3a5f;color:#60a5fa;}
+  .av-green{background:#0f3a2a;color:#4ade80;}
+  .av-purple{background:#2d1b69;color:#a78bfa;}
+  .av-rose{background:#3b1a2a;color:#f472b6;}
+  .av-orange{background:#3b2a0a;color:#fb923c;}
+  .av-teal{background:#0f3a3a;color:#2dd4bf;}
+  .av-yellow{background:#3b3a0a;color:#facc15;}
+  .av-indigo{background:#1e1b4b;color:#818cf8;}
+  .av-white{background:#1e3a5f;color:#fff;}
+  .section-label{font-size:11px;color:#4a6a8a;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.05em;font-weight:500;}
+  .badge{font-size:11px;padding:3px 9px;border-radius:8px;display:inline-block;}
+  .badge-note{background:#1e3a5f;color:#60a5fa;}
+  .badge-done{background:#0f3a2a;color:#4ade80;}
+  textarea{width:100%;border:1px solid #1e3a5f;border-radius:8px;padding:8px 10px;font-size:13px;font-family:inherit;color:#fff;background:#0d1f3c;resize:vertical;min-height:80px;outline:none;}
+  textarea::placeholder{color:#4a6a8a;}
+  input[type=text]{width:100%;border:1px solid #1e3a5f;border-radius:8px;padding:8px 10px;font-size:13px;font-family:inherit;color:#fff;background:#0d1f3c;outline:none;}
+  input[type=text]::placeholder{color:#4a6a8a;}
+  input[type=file]{display:none;}
+  .btn{padding:8px 14px;border:1px solid #1e3a5f;border-radius:8px;background:#112240;font-size:13px;cursor:pointer;color:#fff;}
+  .btn:hover{background:#1e3a5f;}
+  .btn-primary{background:#2563eb;color:#fff;border-color:#2563eb;font-weight:500;}
+  .btn-primary:hover{background:#1d4ed8;}
+  .btn-sm{padding:3px 9px;font-size:12px;border:1px solid #1e3a5f;border-radius:6px;background:#112240;cursor:pointer;color:#7a9cc0;}
+  .btn-edit{padding:3px 7px;font-size:12px;border:1px solid #1e3a5f;border-radius:6px;background:#112240;cursor:pointer;color:#60a5fa;}
+  .btn-save{padding:3px 7px;font-size:12px;border:1px solid #4ade80;border-radius:6px;background:#112240;cursor:pointer;color:#4ade80;}
+  .btn-camera{background:#2563eb;color:#fff;border-color:#2563eb;font-size:13px;padding:8px 14px;border-radius:8px;border-width:1px;border-style:solid;cursor:pointer;}
+  .btn-library{background:#112240;color:#fff;border-color:#1e3a5f;font-size:13px;padding:8px 14px;border-radius:8px;border-width:1px;border-style:solid;cursor:pointer;}
+  .person-tab-bar{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
+  .ptab{padding:6px 14px;border:1px solid #1e3a5f;border-radius:8px;font-size:13px;cursor:pointer;color:#7a9cc0;background:#112240;}
+  .ptab.active{background:#2563eb;color:#fff;font-weight:500;border-color:#2563eb;}
+  .note-item{padding:8px 0;border-bottom:1px solid #1e3a5f;font-size:13px;color:#fff;line-height:1.5;display:flex;gap:6px;align-items:flex-start;}
+  .note-item:last-child{border-bottom:none;}
+  .note-dot{width:6px;height:6px;border-radius:50%;background:#2563eb;flex-shrink:0;margin-top:6px;}
+  .item-text{font-size:13px;color:#fff;flex:1;line-height:1.5;}
+  .item-edit-input{flex:1;border:1px solid #2563eb;border-radius:6px;padding:4px 8px;font-size:13px;font-family:inherit;color:#fff;background:#0d1f3c;outline:none;}
+  .photo-item{padding:8px 0;border-bottom:1px solid #1e3a5f;display:flex;gap:8px;align-items:flex-start;}
+  .photo-item:last-child{border-bottom:none;}
+  .photo-item img{width:50%;max-width:150px;height:auto;object-fit:cover;border-radius:8px;border:1px solid #1e3a5f;cursor:pointer;}
+  .metric-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.25rem;}
+  .metric{background:#112240;border-radius:8px;padding:0.75rem 1rem;border:1px solid #1e3a5f;cursor:pointer;transition:background 0.15s;}
+  .metric:hover{background:#1e3a5f;}
+  .metric-label{font-size:12px;color:#4a6a8a;margin-bottom:3px;}
+  .metric-val{font-size:22px;font-weight:500;color:#fff;}
+  .person-card{background:#112240;border:1px solid #1e3a5f;border-radius:12px;padding:1rem 1.25rem;margin-bottom:12px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:background 0.15s;}
+  .person-card:hover{background:#1e3a5f;}
+  .subsection{margin-top:16px;padding-top:14px;border-top:1px solid #1e3a5f;}
+  .add-row{display:flex;gap:8px;margin-top:8px;}
+  .add-row input{flex:1;}
+  .empty{font-size:13px;color:#4a6a8a;padding:6px 0;}
+  .sync-bar{display:flex;align-items:center;gap:8px;font-size:12px;color:#4a6a8a;margin-bottom:1rem;}
+  .sync-dot{width:8px;height:8px;border-radius:50%;background:#4ade80;border:1px solid #22c55e;}
+  .sync-dot.syncing{background:#facc15;border-color:#eab308;}
+  .sync-dot.error{background:#f87171;border-color:#ef4444;}
+  .uploading{font-size:12px;color:#7a9cc0;padding:6px 0;font-style:italic;}
+  .photo-btns{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;}
+  @media(max-width:500px){.metric-row{grid-template-columns:repeat(2,1fr);}}
+</style>
+</head>
+<body>
+<div id="login-screen">
+  <div class="login-box">
+    <h1>👋 Chris App</h1>
+    <p>Skriv inn passordet ditt</p>
+    <input type="password" id="password-input" placeholder="Passord..." onkeydown="if(event.key==='Enter')checkPassword()" />
+    <button onclick="checkPassword()">Logg inn</button>
+    <p class="login-error" id="login-error"></p>
+  </div>
+</div>
+
+<div id="app" style="display:none;">
+  <div class="container">
+    <h1 class="app-title">👋 Chris App</h1>
+    <p class="subtitle">Pals Kaffe · BBQ Shop · Prosjekter · Steder · Familie · Meg selv</p>
+    <div class="sync-bar">
+      <div class="sync-dot syncing" id="sync-dot"></div>
+      <span id="sync-status">Laster data...</span>
+      <button class="btn-sm" onclick="syncFromSheet()" style="margin-left:auto;">Oppdater</button>
+    </div>
+    <div class="tab-bar">
+      <button class="tab active" id="tab-oversikt" onclick="showTab('oversikt',this)">Oversikt</button>
+      <button class="tab" id="tab-pals" onclick="showTab('pals',this)">Pals Kaffe</button>
+      <button class="tab" id="tab-bbq" onclick="showTab('bbq',this)">BBQ Shop</button>
+      <button class="tab" id="tab-prosjekter" onclick="showTab('prosjekter',this)">Prosjekter</button>
+      <button class="tab" id="tab-steder" onclick="showTab('steder',this)">Steder</button>
+      <button class="tab" id="tab-familie" onclick="showTab('familie',this)">Familie</button>
+      <button class="tab" id="tab-meg" onclick="showTab('meg',this)">Meg selv</button>
+    </div>
+
+    <div id="oversikt" class="section active"></div>
+
+    <div id="pals" class="section">
+      <div class="person-tab-bar" id="pals-tabs"></div>
+      <div id="pals-content"></div>
+    </div>
+
+    <div id="bbq" class="section">
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+          <div class="avatar av-orange">BBQ</div>
+          <span style="font-weight:500;font-size:16px;color:#fff;">BBQ Shop</span>
+        </div>
+        <p class="section-label">Huskeliste</p>
+        <div id="bbq-list"></div>
+        <div class="add-row">
+          <input type="text" id="new-bbq" placeholder="Legg til notat..." onkeydown="if(event.key==='Enter')addBbqNote()" />
+          <button class="btn" onclick="addBbqNote()">Legg til</button>
+        </div>
+        <div class="photo-btns" style="margin-top:8px;">
+          <input type="file" id="bbq-camera" accept="image/*" onchange="handlePhotoTo('bbq',this)" />
+          <input type="file" id="bbq-library" accept="image/*" onchange="handlePhotoTo('bbq',this)" />
+          <button class="btn-camera" onclick="document.getElementById('bbq-camera').click()">📷 Ta bilde</button>
+          <button class="btn-library" onclick="document.getElementById('bbq-library').click()">🖼 Bibliotek</button>
+          <span id="bbq-upload-status"></span>
+        </div>
+      </div>
+    </div>
+
+    <div id="prosjekter" class="section">
+      <div class="person-tab-bar" id="prosj-tabs"></div>
+      <div id="prosj-content"></div>
+    </div>
+
+    <div id="steder" class="section">
+      <div class="person-tab-bar" id="sted-tabs"></div>
+      <div id="sted-content"></div>
+    </div>
+
+    <div id="familie" class="section">
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+          <div class="avatar av-rose">FA</div>
+          <span style="font-weight:500;font-size:16px;color:#fff;">Familie</span>
+        </div>
+        <p class="section-label">Huskeliste</p>
+        <div id="familie-list"></div>
+        <div class="add-row">
+          <input type="text" id="new-familie" placeholder="Legg til notat..." onkeydown="if(event.key==='Enter')addFamilieNote()" />
+          <button class="btn" onclick="addFamilieNote()">Legg til</button>
+        </div>
+        <div class="photo-btns" style="margin-top:8px;">
+          <input type="file" id="familie-camera" accept="image/*" onchange="handlePhotoTo('familie',this)" />
+          <input type="file" id="familie-library" accept="image/*" onchange="handlePhotoTo('familie',this)" />
+          <button class="btn-camera" onclick="document.getElementById('familie-camera').click()">📷 Ta bilde</button>
+          <button class="btn-library" onclick="document.getElementById('familie-library').click()">🖼 Bibliotek</button>
+          <span id="familie-upload-status"></span>
+        </div>
+      </div>
+    </div>
+
+    <div id="meg" class="section">
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+          <div class="avatar av-white">CB</div>
+          <span style="font-weight:500;font-size:16px;color:#fff;">Meg selv</span>
+        </div>
+        <p class="section-label">Huskeliste</p>
+        <div id="self-list"></div>
+        <div class="add-row">
+          <input type="text" id="new-self" placeholder="Skriv noe du vil huske..." onkeydown="if(event.key==='Enter')addSelfNote()" />
+          <button class="btn" onclick="addSelfNote()">Legg til</button>
+        </div>
+        <div class="photo-btns" style="margin-top:8px;">
+          <input type="file" id="self-camera" accept="image/*" onchange="handlePhotoTo('self',this)" />
+          <input type="file" id="self-library" accept="image/*" onchange="handlePhotoTo('self',this)" />
+          <button class="btn-camera" onclick="document.getElementById('self-camera').click()">📷 Ta bilde</button>
+          <button class="btn-library" onclick="document.getElementById('self-library').click()">🖼 Bibliotek</button>
+          <span id="self-upload-status"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const PASSWORD='Wanda123';
+const API='https://script.google.com/macros/s/AKfycbwTJUFd3d_jn0pZMYIgvis1KfIOhLRDe57BKUsgQ_tCY_ki93aEUrmO6c0yagmZ90sc/exec';
+
+const PALS_ITEMS=[
+  {id:'pals_lars',name:'Lars',initials:'LA',avClass:'av-blue'},
+  {id:'pals_lisa',name:'Lisa',initials:'LI',avClass:'av-rose'},
+  {id:'pals_thea',name:'Thea',initials:'TH',avClass:'av-purple'}
+];
+const PROSJ_ITEMS=[
+  {id:'prosj_nesoya',name:'Nesøya',initials:'NE',avClass:'av-green'},
+  {id:'prosj_airbnb',name:'AirBnb',initials:'AB',avClass:'av-teal'},
+  {id:'prosj_ideer',name:'Ideer',initials:'ID',avClass:'av-yellow'}
+];
+const STED_ITEMS=[
+  {id:'sted_hvaler',name:'Hvaler',initials:'HV',avClass:'av-blue'},
+  {id:'sted_skeikampen',name:'Skeikampen',initials:'SK',avClass:'av-indigo'}
+];
+const ALL_ITEMS=[...PALS_ITEMS,...PROSJ_ITEMS,...STED_ITEMS];
+
+let notes={};
+let bbqNotes=[];
+let familieNotes=[];
+let selfNotes=[];
+let activePals=PALS_ITEMS[0].id;
+let activeProsj=PROSJ_ITEMS[0].id;
+let activeSted=STED_ITEMS[0].id;
+let isSyncing=false;
+
+ALL_ITEMS.forEach(item=>{notes[item.id]=[];});
+
+function checkPassword(){
+  const val=document.getElementById('password-input').value;
+  if(val===PASSWORD){
+    localStorage.setItem('chris_auth','yes');
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('app').style.display='block';
+    syncFromSheet();
+  } else {
+    document.getElementById('login-error').textContent='Feil passord, prøv igjen.';
+  }
+}
+window.onload=function(){
+  if(localStorage.getItem('chris_auth')==='yes'){
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('app').style.display='block';
+    syncFromSheet();
+  }
+};
+
+function today(){return new Date().toLocaleDateString('no-NO',{day:'2-digit',month:'2-digit',year:'numeric'});}
+function uid(){return 'cb_'+Date.now().toString(36)+Math.random().toString(36).slice(2);}
+function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function setSyncStatus(state,msg){
+  document.getElementById('sync-dot').className='sync-dot '+state;
+  document.getElementById('sync-status').textContent=msg;
+}
+function goToTab(tabId){showTab(tabId,document.getElementById('tab-'+tabId));}
+
+function makeNoteRow(note,saveType,onDelete){
+  return `<div class="note-item" id="row-${note.id}">
+    <div class="note-dot" style="margin-top:8px;flex-shrink:0;"></div>
+    <span class="item-text" id="txt-${note.id}" style="flex:1;">${escHtml(note.text)}<span style="font-size:11px;color:#4a6a8a;margin-left:8px;">${note.date}</span></span>
+    <input class="item-edit-input" id="edit-${note.id}" style="display:none;" value="${escHtml(note.text)}" onkeydown="if(event.key==='Enter')saveEdit('${note.id}','${saveType}')" />
+    <button class="btn-edit" id="ebtn-${note.id}" onclick="startEdit('${note.id}')">✏️</button>
+    <button class="btn-save" id="sbtn-${note.id}" style="display:none;" onclick="saveEdit('${note.id}','${saveType}')">✓</button>
+    <button class="btn-sm" onclick="${onDelete}('${note.id}')">×</button>
+  </div>`;
+}
+
+function makePhotoRow(note,onDelete){
+  return `<div class="photo-item" id="row-${note.id}">
+    <div style="flex:1;">
+      <img src="${note.imageUrl}" alt="Bilde" onclick="window.open('${note.imageUrl}','_blank')" />
+      <div style="font-size:11px;color:#4a6a8a;margin-top:4px;">${note.date}</div>
+      <button class="btn-sm" style="margin-top:4px;" onclick="${onDelete}('${note.id}')">Slett</button>
+    </div>
+  </div>`;
+}
+
+function startEdit(id){
+  document.getElementById('txt-'+id).style.display='none';
+  document.getElementById('edit-'+id).style.display='';
+  document.getElementById('edit-'+id).focus();
+  document.getElementById('ebtn-'+id).style.display='none';
+  document.getElementById('sbtn-'+id).style.display='';
+}
+function saveEdit(id,type){
+  const val=document.getElementById('edit-'+id).value.trim();
+  if(!val)return;
+  if(type==='note'){
+    for(const key in notes){const n=notes[key].find(x=>x.id===id);if(n){n.text=val;break;}}
+    saveToSheet();renderAll();
+  } else if(type==='bbq'){const n=bbqNotes.find(x=>x.id===id);if(n){n.text=val;saveToSheet();renderBbq();}}
+  else if(type==='familie'){const n=familieNotes.find(x=>x.id===id);if(n){n.text=val;saveToSheet();renderFamilie();}}
+  else if(type==='self'){const n=selfNotes.find(x=>x.id===id);if(n){n.text=val;saveToSheet();renderSelf();}}
+}
+
+async function handlePhotoTo(section,input){
+  if(!input.files||!input.files[0])return;
+  const file=input.files[0];
+  const statusEl=document.getElementById(section+'-upload-status');
+  statusEl.className='uploading';
+  statusEl.textContent='Laster opp bilde...';
+  const reader=new FileReader();
+  reader.onload=async function(e){
+    const base64=e.target.result.split(',')[1];
+    const mimeType=file.type;
+    const filename='cb_bilde_'+Date.now()+'.jpg';
+    try{
+      const res=await fetch(API,{method:'POST',body:JSON.stringify({action:'uploadImage',data:base64,mimeType,filename})});
+      const data=await res.json();
+      if(data.url){
+        const newNote={id:uid(),text:'',imageUrl:data.url,date:today()};
+        if(section==='bbq'){bbqNotes.unshift(newNote);saveToSheet();renderBbq();}
+        else if(section==='familie'){familieNotes.unshift(newNote);saveToSheet();renderFamilie();}
+        else if(section==='self'){selfNotes.unshift(newNote);saveToSheet();renderSelf();}
+        else{
+          const catId=getCurrentCatId(section);
+          if(catId&&notes[catId]!==undefined){notes[catId].unshift(newNote);saveToSheet();renderAll();}
+        }
+        statusEl.textContent='Lastet opp!';
+        setTimeout(()=>statusEl.textContent='',2000);
+        renderOversikt();
+      }
+    }catch(err){statusEl.textContent='Feil ved opplasting';}
+  };
+  reader.readAsDataURL(file);
+  input.value='';
+}
+
+function getCurrentCatId(section){
+  if(section==='pals')return activePals;
+  if(section==='prosj')return activeProsj;
+  if(section==='sted')return activeSted;
+  return null;
+}
+
+async function syncFromSheet(){
+  if(isSyncing)return;
+  isSyncing=true;
+  setSyncStatus('syncing','Henter data...');
+  try{
+    const res=await fetch(API+'?t='+Date.now());
+    const rows=await res.json();
+    ALL_ITEMS.forEach(item=>{notes[item.id]=[];});
+    bbqNotes=[];familieNotes=[];selfNotes=[];
+
+    rows.filter(r=>r.type==='cbnote').forEach(r=>{
+      const parts=r.text.split('||');const id=parts[0];const cat=r.pid;const rest=parts.slice(1).join('||');
+      if(notes[cat]!==undefined){
+        if(rest.startsWith('IMG:')){notes[cat].push({id,text:'',imageUrl:rest.slice(4),date:r.date});}
+        else{notes[cat].push({id,text:rest,date:r.date});}
+      }
+    });
+    rows.filter(r=>r.type==='cbbbq').forEach(r=>{
+      const parts=r.text.split('||');const id=parts[0];const rest=parts.slice(1).join('||');
+      if(rest.startsWith('IMG:')){bbqNotes.push({id,text:'',imageUrl:rest.slice(4),date:r.date});}
+      else{bbqNotes.push({id,text:rest,date:r.date});}
+    });
+    rows.filter(r=>r.type==='cbfamilie').forEach(r=>{
+      const parts=r.text.split('||');const id=parts[0];const rest=parts.slice(1).join('||');
+      if(rest.startsWith('IMG:')){familieNotes.push({id,text:'',imageUrl:rest.slice(4),date:r.date});}
+      else{familieNotes.push({id,text:rest,date:r.date});}
+    });
+    rows.filter(r=>r.type==='cbself').forEach(r=>{
+      const parts=r.text.split('||');const id=parts[0];const rest=parts.slice(1).join('||');
+      if(rest.startsWith('IMG:')){selfNotes.push({id,text:'',imageUrl:rest.slice(4),date:r.date});}
+      else{selfNotes.push({id,text:rest,date:r.date});}
+    });
+
+    setSyncStatus('','Synkronisert '+today());
+    renderAll();isSyncing=false;
+  }catch(e){setSyncStatus('error','Feil ved henting');isSyncing=false;}
+}
+
+async function saveToSheet(){
+  setSyncStatus('syncing','Lagrer...');
+  const rows=[];
+  ALL_ITEMS.forEach(item=>{
+    (notes[item.id]||[]).forEach(n=>{
+      rows.push({type:'cbnote',pid:item.id,text:n.id+'||'+(n.imageUrl?'IMG:'+n.imageUrl:n.text),date:n.date,done:'false'});
+    });
+  });
+  bbqNotes.forEach(n=>{rows.push({type:'cbbbq',pid:'cb_bbq',text:n.id+'||'+(n.imageUrl?'IMG:'+n.imageUrl:n.text),date:n.date,done:'false'});});
+  familieNotes.forEach(n=>{rows.push({type:'cbfamilie',pid:'cb_familie',text:n.id+'||'+(n.imageUrl?'IMG:'+n.imageUrl:n.text),date:n.date,done:'false'});});
+  selfNotes.forEach(n=>{rows.push({type:'cbself',pid:'cb_self',text:n.id+'||'+(n.imageUrl?'IMG:'+n.imageUrl:n.text),date:n.date,done:'false'});});
+  try{
+    await fetch(API,{method:'POST',body:JSON.stringify({action:'replace',rows})});
+    setSyncStatus('','Lagret '+today());
+  }catch(e){setSyncStatus('error','Feil ved lagring');}
+}
+
+function renderAll(){
+  renderOversikt();
+  renderPalsTabs();renderPalsContent();
+  renderProsjTabs();renderProsjContent();
+  renderStedTabs();renderStedContent();
+  renderBbq();renderFamilie();renderSelf();
+}
+
+function showTab(id,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');btn.classList.add('active');
+  if(id==='oversikt')renderOversikt();
+  if(id==='pals'){renderPalsTabs();renderPalsContent();}
+  if(id==='bbq')renderBbq();
+  if(id==='prosjekter'){renderProsjTabs();renderProsjContent();}
+  if(id==='steder'){renderStedTabs();renderStedContent();}
+  if(id==='familie')renderFamilie();
+  if(id==='meg')renderSelf();
+}
+
+function renderOversikt(){
+  const el=document.getElementById('oversikt');
+  const palsCount=PALS_ITEMS.reduce((a,i)=>a+(notes[i.id]||[]).length,0);
+  const prosjCount=PROSJ_ITEMS.reduce((a,i)=>a+(notes[i.id]||[]).length,0);
+  const stedCount=STED_ITEMS.reduce((a,i)=>a+(notes[i.id]||[]).length,0);
+  el.innerHTML=`
+    <div class="metric-row">
+      <div class="metric" onclick="goToTab('pals')"><div class="metric-label">Pals Kaffe</div><div class="metric-val">${palsCount}</div></div>
+      <div class="metric" onclick="goToTab('bbq')"><div class="metric-label">BBQ Shop</div><div class="metric-val">${bbqNotes.length}</div></div>
+      <div class="metric" onclick="goToTab('prosjekter')"><div class="metric-label">Prosjekter</div><div class="metric-val">${prosjCount}</div></div>
+      <div class="metric" onclick="goToTab('steder')"><div class="metric-label">Steder</div><div class="metric-val">${stedCount}</div></div>
+      <div class="metric" onclick="goToTab('familie')"><div class="metric-label">Familie</div><div class="metric-val">${familieNotes.length}</div></div>
+      <div class="metric" onclick="goToTab('meg')"><div class="metric-label">Meg selv</div><div class="metric-val">${selfNotes.length}</div></div>
+    </div>
+    <p class="section-label" style="margin-bottom:8px;">Kategorier</p>
+    ${[
+      {id:'pals',label:'Pals Kaffe',sub:'Lars · Lisa · Thea',avClass:'av-blue',initials:'PK',count:palsCount},
+      {id:'bbq',label:'BBQ Shop',sub:'Huskeliste',avClass:'av-orange',initials:'BBQ',count:bbqNotes.length},
+      {id:'prosjekter',label:'Prosjekter',sub:'Nesøya · AirBnb · Ideer',avClass:'av-green',initials:'PR',count:prosjCount},
+      {id:'steder',label:'Steder',sub:'Hvaler · Skeikampen',avClass:'av-indigo',initials:'ST',count:stedCount},
+      {id:'familie',label:'Familie',sub:'Huskeliste',avClass:'av-rose',initials:'FA',count:familieNotes.length},
+      {id:'meg',label:'Meg selv',sub:'Huskeliste + bilder',avClass:'av-white',initials:'CB',count:selfNotes.length}
+    ].map(cat=>`<div class="person-card" onclick="goToTab('${cat.id}')">
+      <div class="avatar ${cat.avClass}">${cat.initials}</div>
+      <div style="flex:1;"><div style="font-weight:500;font-size:14px;color:#fff;">${cat.label}</div><div style="font-size:12px;color:#4a6a8a;">${cat.sub}</div></div>
+      <div>${cat.count>0?`<span class="badge badge-note">${cat.count}</span>`:'<span class="badge badge-done">Tomt</span>'}</div>
+    </div>`).join('')}`;
+}
+
+function renderPalsTabs(){
+  document.getElementById('pals-tabs').innerHTML=PALS_ITEMS.map(i=>
+    `<button class="ptab ${i.id===activePals?'active':''}" onclick="switchPals('${i.id}')">${i.name}</button>`).join('');
+}
+function switchPals(id){activePals=id;renderPalsTabs();renderPalsContent();}
+function renderPalsContent(){
+  const item=PALS_ITEMS.find(x=>x.id===activePals);
+  document.getElementById('pals-content').innerHTML=renderCategoryCard(item,notes[item.id]||[],'deletePalsNote','addPalsNote','pals');
+}
+
+function renderProsjTabs(){
+  document.getElementById('prosj-tabs').innerHTML=PROSJ_ITEMS.map(i=>
+    `<button class="ptab ${i.id===activeProsj?'active':''}" onclick="switchProsj('${i.id}')">${i.name}</button>`).join('');
+}
+function switchProsj(id){activeProsj=id;renderProsjTabs();renderProsjContent();}
+function renderProsjContent(){
+  const item=PROSJ_ITEMS.find(x=>x.id===activeProsj);
+  document.getElementById('prosj-content').innerHTML=renderCategoryCard(item,notes[item.id]||[],'deleteProsjNote','addProsjNote','prosj');
+}
+
+function renderStedTabs(){
+  document.getElementById('sted-tabs').innerHTML=STED_ITEMS.map(i=>
+    `<button class="ptab ${i.id===activeSted?'active':''}" onclick="switchSted('${i.id}')">${i.name}</button>`).join('');
+}
+function switchSted(id){activeSted=id;renderStedTabs();renderStedContent();}
+function renderStedContent(){
+  const item=STED_ITEMS.find(x=>x.id===activeSted);
+  document.getElementById('sted-content').innerHTML=renderCategoryCard(item,notes[item.id]||[],'deleteStedNote','addStedNote','sted');
+}
+
+function renderCategoryCard(item,itemNotes,deleteFn,addFn,section){
+  return `<div class="card">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+      <div class="avatar ${item.avClass}">${item.initials}</div>
+      <span style="font-weight:500;font-size:16px;color:#fff;">${item.name}</span>
+    </div>
+    <p class="section-label">Huskeliste</p>
+    <div>
+      ${itemNotes.length===0?'<p class="empty">Ingen notater ennå.</p>':''}
+      ${itemNotes.map(n=>n.imageUrl?makePhotoRow(n,deleteFn):makeNoteRow(n,'note',deleteFn)).join('')}
+    </div>
+    <div class="add-row">
+      <input type="text" id="new-note-${item.id}" placeholder="Legg til notat..." onkeydown="if(event.key==='Enter')${addFn}()" />
+      <button class="btn" onclick="${addFn}()">Legg til</button>
+    </div>
+    <div class="photo-btns" style="margin-top:8px;">
+      <input type="file" id="${section}-cat-camera" accept="image/*" onchange="handlePhotoTo('${section}',this)" />
+      <input type="file" id="${section}-cat-library" accept="image/*" onchange="handlePhotoTo('${section}',this)" />
+      <button class="btn-camera" onclick="document.getElementById('${section}-cat-camera').click()">📷 Ta bilde</button>
+      <button class="btn-library" onclick="document.getElementById('${section}-cat-library').click()">🖼 Bibliotek</button>
+      <span id="${section}-upload-status"></span>
+    </div>
+  </div>`;
+}
+
+function addNoteToCategory(catId,inputId){
+  const inp=document.getElementById(inputId);const text=inp.value.trim();if(!text)return;
+  if(!notes[catId])notes[catId]=[];
+  notes[catId].unshift({id:uid(),text,imageUrl:'',date:today()});
+  inp.value='';saveToSheet();renderAll();
+}
+function deleteNoteFromCategory(catId,id){
+  notes[catId]=(notes[catId]||[]).filter(n=>n.id!==id);saveToSheet();renderAll();
+}
+function addPalsNote(){addNoteToCategory(activePals,'new-note-'+activePals);}
+function deletePalsNote(id){deleteNoteFromCategory(activePals,id);}
+function addProsjNote(){addNoteToCategory(activeProsj,'new-note-'+activeProsj);}
+function deleteProsjNote(id){deleteNoteFromCategory(activeProsj,id);}
+function addStedNote(){addNoteToCategory(activeSted,'new-note-'+activeSted);}
+function deleteStedNote(id){deleteNoteFromCategory(activeSted,id);}
+
+function renderNoteList(notes,saveType,deleteFn){
+  if(!notes.length)return '<p class="empty">Ingen notater ennå.</p>';
+  return notes.map(n=>n.imageUrl?makePhotoRow(n,deleteFn):makeNoteRow(n,saveType,deleteFn)).join('');
+}
+
+function renderBbq(){
+  const el=document.getElementById('bbq-list');if(!el)return;
+  el.innerHTML=renderNoteList(bbqNotes,'bbq','deleteBbqNote');
+}
+function addBbqNote(){const inp=document.getElementById('new-bbq');const text=inp.value.trim();if(!text)return;bbqNotes.unshift({id:uid(),text,imageUrl:'',date:today()});inp.value='';saveToSheet();renderBbq();renderOversikt();}
+function deleteBbqNote(id){bbqNotes=bbqNotes.filter(n=>n.id!==id);saveToSheet();renderBbq();renderOversikt();}
+
+function renderFamilie(){
+  const el=document.getElementById('familie-list');if(!el)return;
+  el.innerHTML=renderNoteList(familieNotes,'familie','deleteFamilieNote');
+}
+function addFamilieNote(){const inp=document.getElementById('new-familie');const text=inp.value.trim();if(!text)return;familieNotes.unshift({id:uid(),text,imageUrl:'',date:today()});inp.value='';saveToSheet();renderFamilie();renderOversikt();}
+function deleteFamilieNote(id){familieNotes=familieNotes.filter(n=>n.id!==id);saveToSheet();renderFamilie();renderOversikt();}
+
+function renderSelf(){
+  const el=document.getElementById('self-list');if(!el)return;
+  el.innerHTML=renderNoteList(selfNotes,'self','deleteSelfNote');
+}
+function addSelfNote(){const inp=document.getElementById('new-self');const text=inp.value.trim();if(!text)return;selfNotes.unshift({id:uid(),text,imageUrl:'',date:today()});inp.value='';saveToSheet();renderSelf();renderOversikt();}
+function deleteSelfNote(id){selfNotes=selfNotes.filter(n=>n.id!==id);saveToSheet();renderSelf();renderOversikt();}
+
+syncFromSheet();
+</script>
+</body>
+</html>
